@@ -1,12 +1,11 @@
 import './App.css'
+import { Header } from './components/UI/Header'
 
 function App() {
   return (
-    <>
-      <div>
-        <h1 className={"text-3xl font-bold underline"}>Jesper</h1>
-      </div>
-    </>
+    <div id="main" className="bg-grey-100 h-screen">
+      <Header />
+    </div>
   )
 }
 
