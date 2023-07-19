@@ -1,9 +1,13 @@
 import React from "react"
-
+import { io } from "socket.io-client";
 export const ChatBox = () => {
     const [msg, setMsg] = React.useState("");
     const [msgList, setMsgList] = React.useState([""]);
-
+    const socket = io("http://localhost:3000");
+    socket.on("connect", () => {
+        const tempMessageList = [`'You connected with ID: ${socket.id}`]
+        setMsgList(tempMessageList)
+    })
     React.useEffect(() => {
         window.addEventListener("keyup", (e) => {
             if(e.key === "Enter") onSendMessage();

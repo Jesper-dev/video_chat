@@ -1,19 +1,9 @@
-const express = require("express");
-const expressWs = require("express-ws");
+const io = require("socket.io")(3000, {
+    cors: {
+        origin: ["http://localhost:8080"]
+    }
+});
 
-const app = express();
-
-expressWs(app);
-const connections = new Set();
-
-const wsHandler = (ws) => {
-    connections.add(ws);
-
-    ws.on("message", (message) => {
-        connections.forEach((conn) => conn.send(message))
-    })
-
-    ws.on("close", () => {
-        connections.delete(ws)
-    })
-}
+io.on("connection", (socket) => {
+    console.log(socket.id)
+})
