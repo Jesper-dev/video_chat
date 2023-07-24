@@ -4,21 +4,40 @@ export const ChatBox = () => {
     const [msg, setMsg] = React.useState("");
     const [msgList, setMsgList] = React.useState([""]);
     const socket = io("http://localhost:3000");
-    socket.on("connect", () => {
-        const tempMessageList = [`'You connected with ID: ${socket.id}`]
-        setMsgList(tempMessageList)
-    })
+    
     React.useEffect(() => {
-        window.addEventListener("keyup", (e) => {
-            if(e.key === "Enter") onSendMessage();
+        socket.on("connect", () => {
+            const tempMessageList = [`You connected with ID: ${socket.id}`]
+            setMsgList(tempMessageList)
         })
+
+        socket.on("receive-message", (msgValue: string) => {
+            displayMessages(msgValue);
+        })
+
+        return () => {
+            socket.off("connect", () => {
+                console.log("Disconnected")
+            })
+
+            socket.off("receive-message", () => {
+                console.log("receive-message Disconnected")
+            })
+        }
     }, [])
 
+
+    const displayMessages = (msgValue: string) => {
+        if(!msgValue) return;
+        const tempMessageList = msgList;
+        tempMessageList.push(msgValue)
+        setMsgList(tempMessageList);
+    }
+    
     const onSendMessage = () => {
         if(!msg) return;
-        let tempMsgList = msgList;
-        tempMsgList.push(msg);
-        setMsgList(tempMsgList);
+        socket.emit("send-message", msg)
+        displayMessages(msg)
         setMsg("");
     }
 
